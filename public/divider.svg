@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 20" width="100%" height="100%">
+  <defs>
+    <linearGradient id="glowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ec4899" stop-opacity="0" />
+      <stop offset="15%" stop-color="#ec4899" stop-opacity="0.5" />
+      <stop offset="50%" stop-color="#8b5cf6" stop-opacity="1" />
+      <stop offset="85%" stop-color="#3b82f6" stop-opacity="0.5" />
+      <stop offset="100%" stop-color="#3b82f6" stop-opacity="0" />
+    </linearGradient>
+    <filter id="lineGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <style>
+      @keyframes travel {
+        0% { transform: translateX(80px); }
+        50% { transform: translateX(720px); }
+        100% { transform: translateX(80px); }
+      }
+      .moving-light {
+        fill: #ffffff;
+        filter: url(#lineGlow);
+        animation: travel 4s infinite ease-in-out;
+      }
+    </style>
+  </defs>
+  <!-- Main Glowing Line -->
+  <line x1="80" y1="10" x2="720" y2="10" stroke="url(#glowGrad)" stroke-width="2" filter="url(#lineGlow)" />
+  <!-- Traveling Light Particle -->
+  <circle cx="0" cy="10" r="3" class="moving-light" />
+</svg>

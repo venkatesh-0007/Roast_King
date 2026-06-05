@@ -1,0 +1,172 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#03000a" />
+      <stop offset="50%" stop-color="#070214" />
+      <stop offset="100%" stop-color="#020005" />
+    </linearGradient>
+
+    <!-- Glowing Accretion Disk / Cosmic Gradient -->
+    <linearGradient id="cosmicGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ec4899" />
+      <stop offset="50%" stop-color="#8b5cf6" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+
+    <!-- Star Glow Filter -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <style>
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-8px); }
+      }
+      @keyframes pulse {
+        0%, 100% { opacity: 0.4; transform: scale(0.97); }
+        50% { opacity: 0.8; transform: scale(1.03); }
+      }
+      @keyframes twinkle {
+        0%, 100% { opacity: 0.1; }
+        50% { opacity: 0.9; }
+      }
+      @keyframes orbit {
+        0% { transform: rotate(0deg) translate(110px) rotate(0deg); }
+        100% { transform: rotate(360deg) translate(110px) rotate(-360deg); }
+      }
+      @keyframes gridWarp {
+        0%, 100% { opacity: 0.08; stroke-width: 0.5; }
+        50% { opacity: 0.18; stroke-width: 0.8; }
+      }
+
+      .bg-grid {
+        stroke: #8b5cf6;
+        stroke-width: 0.5;
+        animation: gridWarp 6s infinite ease-in-out;
+      }
+      .star {
+        fill: #fff;
+        animation: twinkle 3s infinite ease-in-out;
+      }
+      .star-fast { animation-duration: 1.5s; }
+      .star-slow { animation-duration: 4.5s; }
+      .blackhole-core {
+        fill: #03000a;
+        stroke: #ec4899;
+        stroke-width: 1;
+        filter: url(#glow);
+      }
+      .accretion-disk {
+        fill: none;
+        stroke: url(#cosmicGrad);
+        stroke-width: 12;
+        filter: url(#glow);
+        transform-origin: 600px 180px;
+        animation: spin 10s infinite linear;
+      }
+      .accretion-disk-outer {
+        fill: none;
+        stroke: url(#cosmicGrad);
+        stroke-width: 1.5;
+        stroke-dasharray: 8 6;
+        opacity: 0.4;
+        transform-origin: 600px 180px;
+        animation: spin 20s infinite linear;
+      }
+      .planet-orbiting {
+        fill: #ffffff;
+        filter: url(#glow);
+        transform-origin: 600px 180px;
+        animation: orbit 6s infinite linear;
+      }
+      .title-text {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        font-weight: 900;
+        font-size: 68px;
+        fill: #ffffff;
+        letter-spacing: 6px;
+      }
+      .subtitle-text {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        font-weight: 500;
+        font-size: 16px;
+        fill: #9ca3af;
+        letter-spacing: 4px;
+      }
+      .floating-logo {
+        transform-origin: 600px 180px;
+        animation: float 6s infinite ease-in-out;
+      }
+    </style>
+  </defs>
+
+  <!-- Background Space -->
+  <rect width="1200" height="400" fill="url(#bgGrad)" />
+
+  <!-- Stars -->
+  <g>
+    <circle cx="80" cy="70" r="1.5" class="star star-fast" />
+    <circle cx="120" cy="320" r="1" class="star" />
+    <circle cx="250" cy="110" r="2" class="star star-slow" />
+    <circle cx="320" cy="80" r="1.2" class="star" />
+    <circle cx="420" cy="340" r="1.5" class="star star-fast" />
+    <circle cx="780" cy="60" r="2" class="star star-slow" />
+    <circle cx="850" cy="350" r="1" class="star" />
+    <circle cx="980" cy="90" r="1.5" class="star star-fast" />
+    <circle cx="1060" cy="290" r="2" class="star star-slow" />
+    <circle cx="1120" cy="120" r="1" class="star" />
+    <circle cx="40" cy="240" r="1.5" class="star" />
+    <circle cx="1160" cy="220" r="2.2" class="star star-fast" />
+  </g>
+
+  <!-- Space warping background grid lines -->
+  <g class="bg-grid" fill="none">
+    <path d="M 0,180 Q 600,280 1200,180" />
+    <path d="M 0,80 Q 600,260 1200,80" />
+    <path d="M 0,280 Q 600,300 1200,280" />
+    <path d="M 600,0 Q 450,180 600,400" />
+    <path d="M 450,0 Q 550,180 450,400" />
+    <path d="M 750,0 Q 650,180 750,400" />
+  </g>
+
+  <!-- Glowing core / Accretion Disk (Black Hole effect) -->
+  <g class="floating-logo">
+    <!-- Outer orbiting dash line -->
+    <circle cx="600" cy="180" r="130" class="accretion-disk-outer" />
+    
+    <!-- Main glowing accretion disk -->
+    <ellipse cx="600" cy="180" rx="100" ry="35" class="accretion-disk" />
+    
+    <!-- Gravitational Lensing glow back -->
+    <circle cx="600" cy="180" r="55" fill="url(#cosmicGrad)" opacity="0.25" filter="url(#glow)" />
+    
+    <!-- Black Hole Center -->
+    <circle cx="600" cy="180" r="40" class="blackhole-core" />
+    
+    <!-- Ring of light (front lens) -->
+    <path d="M 545 180 A 55 35 0 0 1 655 180" fill="none" stroke="url(#cosmicGrad)" stroke-width="5" filter="url(#glow)" />
+    
+    <!-- Orbiting Meteor/Planet -->
+    <circle cx="600" cy="180" r="5.5" class="planet-orbiting" />
+  </g>
+
+  <!-- Glowing text overlay -->
+  <g>
+    <!-- Title with shadow for readability and glow -->
+    <text x="600" y="305" text-anchor="middle" class="title-text" filter="url(#glow)" opacity="0.8">ROAST KING</text>
+    <text x="600" y="305" text-anchor="middle" class="title-text">ROAST KING</text>
+    
+    <!-- Subtitle -->
+    <text x="600" y="345" text-anchor="middle" class="subtitle-text">🌌 THE COGNITIVE DEVASTATION ENGINE</text>
+  </g>
+</svg>
