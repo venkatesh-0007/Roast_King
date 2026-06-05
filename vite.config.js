@@ -6,6 +6,5 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   // Base path for GitHub Pages deployment
-  // Change 'roast-king' to your actual GitHub repo name
-  base: '/roast-king/',
+  base: '/Roast_King/',
 })
