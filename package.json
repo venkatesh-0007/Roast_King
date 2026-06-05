@@ -1,0 +1,50 @@
+{
+  "name": "roast-king",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Got a big ego? Roast King will bring it back to Earth. A cosmic-themed flex roasting web app with interactive gravity animations, liquid glass UI, and a built-in roast engine.",
+  "type": "module",
+  "author": "Venkatesh",
+  "license": "MIT",
+  "homepage": "https://github.com/venkatesh/roast-king",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/venkatesh/roast-king.git"
+  },
+  "keywords": [
+    "roast",
+    "react",
+    "vite",
+    "tailwindcss",
+    "framer-motion",
+    "space",
+    "cosmic",
+    "interactive"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.3.0",
+    "canvas-confetti": "^1.9.4",
+    "framer-motion": "^12.40.0",
+    "lucide-react": "^1.17.0",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "tailwindcss": "^4.3.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "eslint": "^10.3.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.6.0",
+    "vite": "^8.0.12"
+  }
+}

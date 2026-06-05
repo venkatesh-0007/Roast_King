@@ -1,0 +1,136 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Outfit", sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "Space Mono", monospace;
+  
+  --color-cosmic-black: #030014;
+  --color-cosmic-purple: #aa3bff;
+  --color-cosmic-blue: #3b82f6;
+  --color-cosmic-cyan: #06b6d4;
+  
+  --animate-orbit-slow: orbit 40s linear infinite;
+  --animate-orbit-medium: orbit 25s linear infinite;
+  --animate-orbit-fast: orbit 15s linear infinite;
+  --animate-warp: warp 4s ease-in-out infinite alternate;
+  --animate-pulse-glow: pulse-glow 2s ease-in-out infinite alternate;
+  --animate-float: float 6s ease-in-out infinite;
+}
+
+@keyframes orbit {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes warp {
+  0% { transform: scale(1) rotate(0deg); filter: hue-rotate(0deg) drop-shadow(0 0 15px rgba(170, 59, 255, 0.5)); }
+  100% { transform: scale(1.08) rotate(180deg); filter: hue-rotate(60deg) drop-shadow(0 0 35px rgba(6, 182, 212, 0.8)); }
+}
+
+@keyframes pulse-glow {
+  0% { box-shadow: 0 0 15px rgba(170, 59, 255, 0.2); }
+  100% { box-shadow: 0 0 35px rgba(6, 182, 212, 0.5), 0 0 50px rgba(170, 59, 255, 0.3); }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+@keyframes diskBreathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Custom CSS utilities for premium styling */
+.glass-panel {
+  background: rgba(8, 5, 20, 0.45);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 
+    0 8px 32px 0 rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 0 rgba(255, 255, 255, 0.05);
+}
+
+.glass-panel-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.glass-panel-hover:hover {
+  background: rgba(14, 9, 32, 0.65);
+  border-color: rgba(6, 182, 212, 0.25);
+  box-shadow: 
+    0 12px 40px 0 rgba(6, 182, 212, 0.1),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+}
+
+.liquid-glass-nav {
+  background: rgba(8, 5, 20, 0.4);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 
+    0 4px 30px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+}
+
+.glass-drawer {
+  background: rgba(8, 5, 20, 0.65);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+}
+
+.text-gradient-cosmic {
+  background: linear-gradient(135deg, #c084fc 0%, #6366f1 50%, #22d3ee 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-nebula {
+  background: linear-gradient(90deg, #ec4899 0%, #a855f7 50%, #6366f1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-cyan {
+  background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Custom scrollbar for dark theme */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(3, 0, 20, 0.8);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(170, 59, 255, 0.3);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(170, 59, 255, 0.5);
+}
+
+/* Speedometer/gauge styling overrides */
+.circle-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.05);
+}
+
+.circle-progress {
+  fill: none;
+  stroke-linecap: round;
+  transition: stroke-dasharray 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
