@@ -5,7 +5,6 @@ import CosmicBackground from "./components/CosmicBackground";
 import InteractivePlanet from "./components/InteractivePlanet";
 import RoastForm from "./components/RoastForm";
 import RoastResults from "./components/RoastResults";
-import TrendingFlexes from "./components/TrendingFlexes";
 import HistoryDrawer from "./components/HistoryDrawer";
 import { generateRoast } from "./services/roastEngine";
 import { soundManager } from "./services/audio";
@@ -133,13 +132,7 @@ export default function App() {
     localStorage.setItem("roast_history", JSON.stringify(updatedHistory));
   };
 
-  const handlePrefillFlex = (text) => {
-    // Scroll to form and set focus
-    if (formRef.current) {
-      formRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-    // Set intensity automatically depending on trending data if needed, or keep current
-  };
+
 
   const handleClearHistory = () => {
     setHistory([]);
@@ -301,22 +294,7 @@ export default function App() {
           </AnimatePresence>
         </div>
 
-        {/* Pre-populated trending posts board */}
-        {!result && !loading && (
-          <TrendingFlexes
-            onSelectFlex={(text) => {
-              handlePrefillFlex(text);
-              // Set input text indirectly (will be handled by document select)
-              const textarea = document.querySelector("textarea");
-              if (textarea) {
-                textarea.value = text;
-                // Trigger change event to update state inside form component
-                const event = new Event('input', { bubbles: true });
-                textarea.dispatchEvent(event);
-              }
-            }}
-          />
-        )}
+
       </main>
 
       {/* Slideout history log */}
