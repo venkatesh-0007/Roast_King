@@ -44,7 +44,8 @@ export default function RoastForm({ onSubmit, loading, intensity, setIntensity }
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.2 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
       className="w-full max-w-2xl mx-auto px-4 z-10"
     >
       <form onSubmit={handleSubmit} className="glass-panel rounded-3xl p-6 md:p-8 relative overflow-hidden shadow-2xl border border-white/10">

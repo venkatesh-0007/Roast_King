@@ -5,6 +5,6 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  // Base path for GitHub Pages deployment
-  base: '/Roast_King/',
+  // Base path dynamically adjusted for Vercel/GitHub Pages
+  base: process.env.VERCEL ? '/' : '/Roast_King/',
 })

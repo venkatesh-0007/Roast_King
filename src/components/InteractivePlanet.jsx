@@ -261,19 +261,46 @@ export default function InteractivePlanet({ intensity = "gentle" }) {
           />
 
           {/* F. MAIN PLANET/SINGULARITY SPHERE */}
-          {/* Keep radius r constant at 46 and smoothly scale instead of snapping r attribute */}
+          {/* Cyan/Gentle Planet Sphere */}
           <motion.circle
             cx="100"
             cy="100"
             r="46"
-            fill={`url(#${planetGradId})`}
+            fill="url(#gentleGrad)"
             animate={{
+              opacity: intensity === "gentle" ? 1 : 0,
               scale: intensity === "black_hole" ? 0.91 : intensity === "meteor" ? 1.02 : 1.0,
-              filter: intensity === "black_hole"
-                ? "drop-shadow(0 0 30px rgba(168,85,247,0.75))"
-                : intensity === "meteor"
-                ? "drop-shadow(0 0 20px rgba(236,72,153,0.55))"
-                : "drop-shadow(0 0 15px rgba(6,182,212,0.35))"
+              filter: "drop-shadow(0 0 15px rgba(6, 182, 212, 0.35))"
+            }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            style={{ originX: "100px", originY: "100px" }}
+          />
+
+          {/* Pink/Meteor Planet Sphere */}
+          <motion.circle
+            cx="100"
+            cy="100"
+            r="46"
+            fill="url(#meteorGrad)"
+            animate={{
+              opacity: intensity === "meteor" ? 1 : 0,
+              scale: intensity === "black_hole" ? 0.91 : intensity === "meteor" ? 1.02 : 1.0,
+              filter: "drop-shadow(0 0 20px rgba(236, 72, 153, 0.55))"
+            }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            style={{ originX: "100px", originY: "100px" }}
+          />
+
+          {/* Purple/Black Hole Singularity Core */}
+          <motion.circle
+            cx="100"
+            cy="100"
+            r="46"
+            fill="url(#blackHoleGrad)"
+            animate={{
+              opacity: intensity === "black_hole" ? 1 : 0,
+              scale: intensity === "black_hole" ? 0.91 : intensity === "meteor" ? 1.02 : 1.0,
+              filter: "drop-shadow(0 0 30px rgba(168, 85, 247, 0.75))"
             }}
             transition={{ duration: 0.5, ease: "easeOut" }}
             style={{ originX: "100px", originY: "100px" }}

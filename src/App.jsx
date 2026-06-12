@@ -156,6 +156,7 @@ export default function App() {
       <AnimatePresence>
         {warpFlash && (
           <motion.div
+            key={intensity}
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 0.3, scale: 1.4 }}
             exit={{ opacity: 0 }}

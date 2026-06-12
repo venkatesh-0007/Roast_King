@@ -47,6 +47,7 @@ export default function CosmicBackground({ intensity = "gentle" }) {
         this.reset();
         this.vx = this.speedX;
         this.vy = this.speedY;
+        this.lastMode = null;
       }
 
       reset() {
@@ -75,6 +76,15 @@ export default function CosmicBackground({ intensity = "gentle" }) {
       }
 
       update(mode) {
+        if (mode === "black_hole" && this.lastMode !== "black_hole") {
+          // Sync distance and angle to current position to avoid glitch/jump
+          const dx = this.x - canvas.width / 2;
+          const dy = this.y - canvas.height / 2;
+          this.angle = Math.atan2(dy, dx);
+          this.distance = Math.sqrt(dx * dx + dy * dy);
+        }
+        this.lastMode = mode;
+
         let targetVx = this.speedX;
         let targetVy = this.speedY;
 
@@ -180,17 +190,24 @@ export default function CosmicBackground({ intensity = "gentle" }) {
     const particleCount = 180;
     const particles = Array.from({ length: particleCount }, () => new Particle());
 
+    let currentAlpha = 1.0;
+
     // Animation loop
     const animate = () => {
       const mode = intensityRef.current;
+      let targetAlpha = 1.0;
 
       if (mode === "black_hole") {
-        ctx.fillStyle = "rgba(3, 0, 20, 0.12)";
+        targetAlpha = 0.12;
       } else if (mode === "meteor") {
-        ctx.fillStyle = "rgba(3, 0, 20, 0.15)";
+        targetAlpha = 0.15;
       } else {
-        ctx.fillStyle = "rgba(3, 0, 20, 1)";
+        targetAlpha = 1.0;
       }
+
+      // Smoothly transition background alpha clear value
+      currentAlpha += (targetAlpha - currentAlpha) * 0.1;
+      ctx.fillStyle = `rgba(3, 0, 20, ${currentAlpha})`;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Draw cosmic nebula gradients
