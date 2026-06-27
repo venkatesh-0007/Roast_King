@@ -195,7 +195,7 @@ export default function CosmicBackground({ intensity = "gentle" }) {
     // Animation loop
     const animate = () => {
       const mode = intensityRef.current;
-      let targetAlpha = 1.0;
+      let targetAlpha;
 
       if (mode === "black_hole") {
         targetAlpha = 0.12;
