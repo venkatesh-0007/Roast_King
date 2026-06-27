@@ -1,14 +1,25 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Copy, Check, Share2, RefreshCw, Star, Info } from "lucide-react";
+import { Copy, Check, RefreshCw, Star, Activity } from "lucide-react";
 import confetti from "canvas-confetti";
 import { soundManager } from "../services/audio";
+import { ROASTER_PERSONAS } from "../services/roastEngine";
 
-export default function RoastResults({ result, onReset, onStarRoast, starredList = [] }) {
-  const { score, title, roasts, intensity, category } = result;
+export default function RoastResults({ result, onReset, onStarRoast, starredList = [], onOpenEgoRepair }) {
+  const { score, title, roasts, intensity, category, persona = "oracle", telemetry } = result;
   const [displayedScore, setDisplayedScore] = useState(0);
   const [copiedAll, setCopiedAll] = useState(false);
   const [copiedIdx, setCopiedIdx] = useState(null);
+
+  // Fallback telemetry if not generated (e.g. from old localstorage items)
+  const finalTelemetry = telemetry || {
+    delusionIndex: Math.floor(score * 0.8),
+    egoMass: (score * 0.05).toFixed(1) + " M☉",
+    gravityPull: score >= 80 ? "Supermassive (Event Horizon)" : score >= 50 ? "High (Neutron Star)" : "Moderate (Earth-like)",
+    charismaDeficit: score >= 80 ? "Ego Collapse Imminent (99.9%)" : score >= 50 ? "Highly Insufferable (82%)" : "Slightly awkward"
+  };
+
+  const pData = ROASTER_PERSONAS[persona] || ROASTER_PERSONAS.oracle;
 
   // Animate the score counting up
   useEffect(() => {
@@ -35,7 +46,7 @@ export default function RoastResults({ result, onReset, onStarRoast, starredList
             particleCount: 120,
             spread: 80,
             origin: { y: 0.6 },
-            colors: ["#c084fc", "#6366f1", "#22d3ee"]
+            colors: pData.themeGradients
           });
         }
       } else {
@@ -44,12 +55,12 @@ export default function RoastResults({ result, onReset, onStarRoast, starredList
     }, 16);
 
     return () => clearInterval(timer);
-  }, [score]);
+  }, [score, persona, pData.themeGradients]);
 
   // Copy all roasts to clipboard
   const handleCopyAll = () => {
     soundManager.playClick();
-    const fullText = `👑 Roast King ("AntiGravity") Result 👑\n\nTitle: "${title}"\nScore: ${score}/100\n\nRoasts:\n${roasts.map((r, i) => `${i + 1}. ${r}`).join("\n")}\n\nRoast your own ego at Roast King! 🌌`;
+    const fullText = `👑 Roast King ("AntiGravity") Result 👑\n\nPersona: ${pData.name}\nTitle: "${title}"\nScore: ${score}/100\n\nRoasts:\n${roasts.map((r, i) => `${i + 1}. ${r}`).join("\n")}\n\nRoast your own ego at Roast King! 🌌`;
     navigator.clipboard.writeText(fullText);
     setCopiedAll(true);
     setTimeout(() => setCopiedAll(false), 2000);
@@ -66,7 +77,7 @@ export default function RoastResults({ result, onReset, onStarRoast, starredList
   // Share roast on Twitter/X
   const handleShareTwitter = () => {
     soundManager.playClick();
-    const text = `I just got roasted on Roast King ("AntiGravity")! \n\nTitle: "${title}"\nScore: ${score}/100 💀\n\n"${roasts[0]}"\n\nRoast your own flex here:`;
+    const text = `I just got roasted by ${pData.name} on Roast King!\n\nTitle: "${title}"\nScore: ${score}/100 💀\n\n"${roasts[0]}"\n\nRoast your own flex here:`;
     const url = window.location.href;
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, "_blank");
   };
@@ -89,8 +100,8 @@ export default function RoastResults({ result, onReset, onStarRoast, starredList
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.5
+        staggerChildren: 0.12,
+        delayChildren: 0.4
       }
     }
   };
@@ -110,7 +121,10 @@ export default function RoastResults({ result, onReset, onStarRoast, starredList
     >
       <div className="glass-panel rounded-3xl p-6 md:p-8 border border-white/10 shadow-2xl relative overflow-hidden">
         {/* Glow rings in background */}
-        <div className="absolute -top-20 -right-20 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div 
+          className="absolute -top-20 -right-20 w-48 h-48 rounded-full blur-3xl pointer-events-none transition-all duration-500" 
+          style={{ backgroundColor: pData.glowColor }}
+        />
         <div className="absolute -bottom-20 -left-20 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
 
         {/* Score Dial and Title Header */}
@@ -137,7 +151,7 @@ export default function RoastResults({ result, onReset, onStarRoast, starredList
               />
             </svg>
             <div className="absolute flex flex-col items-center justify-center">
-              <span className={`text-4xl font-mono font-bold tracking-tight ${getScoreColor()}`}>
+              <span className={`text-4.5xl font-mono font-bold tracking-tight ${getScoreColor()}`}>
                 {displayedScore}
               </span>
               <span className="text-[10px] uppercase font-bold text-slate-400 tracking-widest mt-0.5">
@@ -148,10 +162,15 @@ export default function RoastResults({ result, onReset, onStarRoast, starredList
 
           {/* Title and stats description */}
           <div className="text-center md:text-left flex-1">
-            <span className="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-widest bg-purple-500/10 text-purple-300 border border-purple-500/20 mb-2.5 inline-block">
-              {intensity === "gentle" ? "🌎 Gentle Orbit" : intensity === "meteor" ? "☄️ Meteor Strike" : "🌌 Black Hole Severity"}
-            </span>
-            <h2 className="text-2xl md:text-3.5xl font-display font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-indigo-200 to-cyan-300 mb-1 leading-tight">
+            <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
+              <span className="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-widest bg-white/5 border border-white/10 text-slate-300">
+                {pData.emoji} {pData.name}
+              </span>
+              <span className="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-widest bg-purple-500/10 text-purple-300 border border-purple-500/20">
+                {intensity === "gentle" ? "🌎 Gentle Orbit" : intensity === "meteor" ? "☄️ Meteor Strike" : "🌌 Black Hole Severity"}
+              </span>
+            </div>
+            <h2 className="text-2xl md:text-3xl font-display font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-indigo-200 to-cyan-300 mb-1.5 leading-tight">
               "{title}"
             </h2>
             <p className="text-sm text-slate-400 flex items-center justify-center md:justify-start gap-1">
@@ -161,15 +180,50 @@ export default function RoastResults({ result, onReset, onStarRoast, starredList
           </div>
         </div>
 
+        {/* 1. New Advanced Telemetry Panel */}
+        <div className="bg-black/30 rounded-2xl p-4 border border-white/5 mb-6 text-left relative overflow-hidden">
+          <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-400 mb-3.5">
+            <Activity className="w-4 h-4 text-purple-400 animate-pulse" />
+            Ego Telemetry Diagnostics:
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <span className="text-slate-500 text-[10px] uppercase font-bold tracking-wider block">Delusion Index</span>
+              <div className="w-full bg-white/10 rounded-full h-1.5 mt-1 overflow-hidden">
+                <div 
+                  className="h-full rounded-full transition-all duration-1000" 
+                  style={{ 
+                    width: `${finalTelemetry.delusionIndex}%`,
+                    background: `linear-gradient(90deg, ${pData.themeGradients[0]}, ${pData.themeGradients[1] || pData.themeGradients[0]})`
+                  }} 
+                />
+              </div>
+              <span className="text-slate-200 font-mono text-[11px] mt-1 block">{finalTelemetry.delusionIndex}%</span>
+            </div>
+            <div>
+              <span className="text-slate-500 text-[10px] uppercase font-bold tracking-wider block">Ego Mass</span>
+              <span className="text-slate-200 font-mono text-sm font-bold block mt-0.5">{finalTelemetry.egoMass}</span>
+            </div>
+            <div>
+              <span className="text-slate-500 text-[10px] uppercase font-bold tracking-wider block">Gravity Pull</span>
+              <span className="text-slate-200 text-xs font-semibold block mt-0.5 leading-tight">{finalTelemetry.gravityPull}</span>
+            </div>
+            <div>
+              <span className="text-slate-500 text-[10px] uppercase font-bold tracking-wider block">Charisma Deficit</span>
+              <span className="text-slate-200 text-xs font-semibold block mt-0.5 leading-tight">{finalTelemetry.charismaDeficit}</span>
+            </div>
+          </div>
+        </div>
+
         {/* The 5 Roast Cards Container */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="show"
-          className="space-y-3 mb-8"
+          className="space-y-3 mb-6"
         >
           <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block text-left mb-2">
-            AI Roasting Diagnostic Report:
+            Persona Roasting Analysis Report:
           </span>
 
           {roasts.map((roast, idx) => (
@@ -229,6 +283,19 @@ export default function RoastResults({ result, onReset, onStarRoast, starredList
             </motion.div>
           ))}
         </motion.div>
+
+        {/* 2. New Ego Repair Protocol Button */}
+        <button
+          type="button"
+          onClick={() => {
+            soundManager.playClick();
+            onOpenEgoRepair();
+          }}
+          className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl border border-purple-500/40 bg-purple-950/20 hover:bg-purple-500/20 text-purple-300 hover:text-purple-200 text-sm font-bold shadow-lg shadow-purple-950/30 transition-all duration-300 cursor-pointer mb-5"
+        >
+          <span>🌌</span>
+          Initiate Ego Repair Protocol (Deflate Ego)
+        </button>
 
         {/* Actions panel */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
