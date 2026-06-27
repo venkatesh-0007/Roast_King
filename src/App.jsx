@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Volume2, VolumeX, History, Orbit, AlertCircle, HelpCircle } from "lucide-react";
+import { Volume2, VolumeX, History, Orbit } from "lucide-react";
 import CosmicBackground from "./components/CosmicBackground";
 import InteractivePlanet from "./components/InteractivePlanet";
 import RoastForm from "./components/RoastForm";
 import RoastResults from "./components/RoastResults";
 import HistoryDrawer from "./components/HistoryDrawer";
-import { generateRoast } from "./services/roastEngine";
+import EgoRepairModal from "./components/EgoRepairModal";
+import { generateRoast, ROASTER_PERSONAS } from "./services/roastEngine";
 import { soundManager } from "./services/audio";
 
 const LOADING_MESSAGES = [
@@ -20,34 +21,38 @@ const LOADING_MESSAGES = [
 
 export default function App() {
   const [intensity, setIntensity] = useState("gentle");
+  const [persona, setPersona] = useState("oracle");
   const [loading, setLoading] = useState(false);
   const [loadingMsg, setLoadingMsg] = useState(LOADING_MESSAGES[0]);
   const [result, setResult] = useState(null);
-  const [history, setHistory] = useState([]);
-  const [historyOpen, setHistoryOpen] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-  const [warpFlash, setWarpFlash] = useState(false);
-  
-  const formRef = useRef(null);
-  const isFirstRender = useRef(true);
-
-  // Load history & sound settings on startup
-  useEffect(() => {
+  const [history, setHistory] = useState(() => {
     const savedHistory = localStorage.getItem("roast_history");
     if (savedHistory) {
       try {
-        setHistory(JSON.parse(savedHistory));
+        return JSON.parse(savedHistory);
       } catch (e) {
         console.error("Failed to parse history", e);
       }
     }
-
+    return [];
+  });
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [isMuted, setIsMuted] = useState(() => {
     const savedMuted = localStorage.getItem("roast_muted");
     if (savedMuted === "true") {
-      soundManager.toggleMute();
-      setIsMuted(true);
+      // Avoid toggling again if already muted
+      if (!soundManager.getIsMuted()) {
+        soundManager.toggleMute();
+      }
+      return true;
     }
-  }, []);
+    return false;
+  });
+  const [warpFlash, setWarpFlash] = useState(false);
+  const [egoRepairOpen, setEgoRepairOpen] = useState(false);
+  
+  const formRef = useRef(null);
+  const isFirstRender = useRef(true);
 
   // Update loading message loop
   useEffect(() => {
@@ -72,13 +77,13 @@ export default function App() {
     setWarpFlash(true);
     const timer = setTimeout(() => setWarpFlash(false), 700);
 
-    // Play intensity-specific synthesizer hums
+    // Play intensity-specific synthesizer hums if persona sound didn't override it
     if (intensity === "gentle") {
       soundManager.playClick();
     } else if (intensity === "meteor") {
-      soundManager.playSuccess(); // chord arpeggio
+      soundManager.playSuccess();
     } else if (intensity === "black_hole") {
-      soundManager.playWarp(); // warp frequency sweep
+      soundManager.playWarp();
     }
 
     return () => clearTimeout(timer);
@@ -95,7 +100,7 @@ export default function App() {
     
     // Simulate API call and gravity warp delay
     setTimeout(() => {
-      const roastData = generateRoast(flexText, intensity);
+      const roastData = generateRoast(flexText, intensity, persona);
       const newRecord = {
         ...roastData,
         flexText,
@@ -124,6 +129,7 @@ export default function App() {
       roastText,
       title,
       score,
+      persona,
       timestamp: Date.now()
     };
 
@@ -132,13 +138,13 @@ export default function App() {
     localStorage.setItem("roast_history", JSON.stringify(updatedHistory));
   };
 
-
-
   const handleClearHistory = () => {
     setHistory([]);
     localStorage.removeItem("roast_history");
     setHistoryOpen(false);
   };
+
+  const activePersonaObj = ROASTER_PERSONAS[persona] || ROASTER_PERSONAS.oracle;
 
   return (
     <div className="min-h-screen relative flex flex-col font-sans text-slate-100 select-none pb-12">
@@ -151,16 +157,12 @@ export default function App() {
           <motion.div
             key={intensity}
             initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 0.3, scale: 1.4 }}
+            animate={{ opacity: 0.35, scale: 1.5 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
             className="fixed inset-0 pointer-events-none z-10 flex items-center justify-center"
             style={{
-              background: intensity === "gentle" 
-                ? "radial-gradient(circle, rgba(6, 182, 212, 0.35) 0%, transparent 70%)"
-                : intensity === "meteor"
-                ? "radial-gradient(circle, rgba(236, 72, 153, 0.35) 0%, transparent 70%)"
-                : "radial-gradient(circle, rgba(168, 85, 247, 0.45) 0%, transparent 70%)"
+              background: `radial-gradient(circle, ${activePersonaObj.glowColor} 0%, transparent 70%)`
             }}
           />
         )}
@@ -215,20 +217,20 @@ export default function App() {
             transition={{ duration: 0.6 }}
           >
             <span className="px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-widest bg-gradient-to-r from-purple-500/15 via-indigo-500/10 to-cyan-500/15 text-purple-300 border border-purple-500/20 mb-5 inline-block">
-              🚀 Version 1.0 Live
+              🚀 Version 1.1 Live
             </span>
             <h1 className="text-4.5xl md:text-6.5xl font-display font-black tracking-tight leading-none mb-4">
-            <span className="text-white">Roast </span>
-            <span className="text-gradient-cosmic">King</span>
-          </h1>
-          <p className="text-base md:text-xl text-slate-400 font-medium max-w-xl mx-auto mb-6">
-            Got a big ego? We'll bring it back to Earth. Because in the grand scheme of the universe, you're still a nobody.
-          </p>
+              <span className="text-white">Roast </span>
+              <span className="text-gradient-cosmic">King</span>
+            </h1>
+            <p className="text-base md:text-xl text-slate-400 font-medium max-w-xl mx-auto mb-6">
+              Got a big ego? We'll bring it back to Earth. Because in the grand scheme of the universe, you're still a nobody.
+            </p>
           </motion.div>
 
           {/* Large Floating Interactive Planet Illustration */}
-          <div className="my-2 md:my-4">
-            <InteractivePlanet intensity={loading ? "black_hole" : intensity} />
+          <div className="my-2 md:my-4 animate-float">
+            <InteractivePlanet intensity={loading ? "black_hole" : intensity} persona={persona} />
           </div>
 
           {/* Quick jump anchor if results aren't open */}
@@ -245,7 +247,7 @@ export default function App() {
               className="text-xs uppercase font-extrabold tracking-widest text-cyan-400 hover:text-cyan-300 transition-colors flex items-center gap-1.5 mx-auto bg-cyan-950/20 hover:bg-cyan-500/10 px-4 py-2 rounded-full border border-cyan-500/15 cursor-pointer mt-4"
             >
               Roast My Flex
-              <span className="text-sm">👇</span>
+              <span className="text-sm font-sans">👇</span>
             </motion.button>
           )}
         </section>
@@ -280,6 +282,7 @@ export default function App() {
                 onReset={() => setResult(null)}
                 onStarRoast={handleStarRoast}
                 starredList={history}
+                onOpenEgoRepair={() => setEgoRepairOpen(true)}
               />
             ) : (
               // Form to type brag inputs
@@ -289,12 +292,12 @@ export default function App() {
                 loading={loading}
                 intensity={intensity}
                 setIntensity={setIntensity}
+                persona={persona}
+                setPersona={setPersona}
               />
             )}
           </AnimatePresence>
         </div>
-
-
       </main>
 
       {/* Slideout history log */}
@@ -305,11 +308,23 @@ export default function App() {
         onClear={handleClearHistory}
       />
 
+      {/* Ego Repair Protocol Modal */}
+      <AnimatePresence>
+        {egoRepairOpen && (
+          <EgoRepairModal
+            isOpen={egoRepairOpen}
+            onClose={() => setEgoRepairOpen(false)}
+            originalScore={result?.score || 0}
+            originalDelusion={result?.telemetry?.delusionIndex || 0}
+          />
+        )}
+      </AnimatePresence>
+
       {/* Footer credits */}
       <footer className="w-full text-center text-xs text-slate-600 mt-16 px-4 relative z-30 font-sans">
         <p className="flex items-center justify-center gap-1.5">
           <span>🌌</span>
-          Built with React 19 + Vite + Tailwind CSS v4. No cookies or gravity fields were harmed in the making.
+          Built with React 19 + Framer Motion + Tailwind CSS. No cookies or gravity fields were harmed in the making.
         </p>
       </footer>
     </div>
